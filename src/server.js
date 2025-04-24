@@ -15,7 +15,7 @@ export const setupServer = () => {
     }));
 
     // app.get('/', (req, res) => {
-    //     res.json({
+    //     res.send({
     //         message: 'Hello'
     //     });
     // });
