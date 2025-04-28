@@ -13,7 +13,7 @@ export const contactSchema = new mongoose.Schema({
         type: String,
         required: false,
     },
-    isFavorite: {
+    isFavourite: {
         type: Boolean,
         default: false,
     },
@@ -23,7 +23,7 @@ export const contactSchema = new mongoose.Schema({
         enum: ['work', 'home', 'personal'],
         default: 'personal',
     }
-});
+}, {timestamps: true});
 
 const Contact = mongoose.model('Contact', contactSchema);
 export default Contact;
