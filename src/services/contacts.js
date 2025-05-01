@@ -1,4 +1,4 @@
-import Contact from '../db/models/contacts.js';
+import Contact from '../db/models/user.js';
 
 export const getContacts = async (req, res) => {
   const contacts = await Contact.find();
@@ -9,14 +9,13 @@ export const getContacts = async (req, res) => {
   });
 };
 
-
 export const getContactById = async (req, res) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
 
   if (contact === null) {
     return res.status(404).json({
-        message: "Contact not found"
+      message: 'Contact not found',
     });
   }
   res.json({
