@@ -1,6 +1,6 @@
 import Contact from '../db/models/contact.js';
 
-export const getContacts = async (req, res) => {
+export const getAllContacts = async (req, res) => {
   const contacts = await Contact.find();
   res.json({
     status: 200,
@@ -13,7 +13,7 @@ export const getContactById = async (req, res) => {
   const { id } = req.params;
   const contact = await Contact.findById(id);
 
-  if (contact === null) {
+  if (!contact) {
     return res.status(404).json({
       message: 'Contact not found',
     });

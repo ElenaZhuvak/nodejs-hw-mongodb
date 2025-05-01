@@ -2,7 +2,8 @@ import express from 'express';
 import cors from 'cors';
 import pino from 'pino-http';
 import { getEnvVar } from './utils/getEnvVar.js';
-import { getContactById, getContacts } from './services/contacts.js';
+import { getAllContacts, getContactById } from './services/contacts.js';
+import { contactsRouter } from './routers/contacts.js';
 
 const PORT = Number(getEnvVar('PORT', 3000));
 
@@ -18,9 +19,11 @@ export const setupServer = () => {
         // удобно, чтобы не засорять каждый раз терминал логами, логирует только ошибки
     }));
 
-    app.get('/contacts', getContacts);
+    app.get('/contacts', getAllContacts);
 
     app.get('/contacts/:id', getContactById);
+
+    app.use(contactsRouter);
 
     app.use('*', (req, res, next) => {
         res.status(404).json({
