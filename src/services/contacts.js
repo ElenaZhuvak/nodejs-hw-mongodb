@@ -16,8 +16,15 @@ export const createContact = async (payload) => {
 };
 
 export const deleteContact = async (contactId) => {
-  const contact = await Contact.findOneAndDelete({
-    _id: contactId,
-  });
+  const contact = await Contact.findByIdAndDelete(contactId);
   return contact;
+};
+
+export const replaceContact = async (contactId, contact) => {
+  const result = await Contact.findByIdAndUpdate(contactId, contact, {
+    new: true,
+    upsert: true,
+    includeResultMetadata: true,
+  });
+  return {value: result.value, updatedExisting: result.lastErrorObject.updatedExisting};
 };

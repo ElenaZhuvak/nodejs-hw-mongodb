@@ -10,13 +10,12 @@ const PORT = Number(getEnvVar('PORT', 3000));
 
 export const setupServer = () => {  
     const app = express();
-    app.use(express.json());
     app.use(cors());
     app.use(pino({
         transport: {
             target: 'pino-pretty',
         },
-        level: 'error'
+        // level: 'error'
         // удобно, чтобы не засорять каждый раз терминал логами, логирует только ошибки
     }));
 
