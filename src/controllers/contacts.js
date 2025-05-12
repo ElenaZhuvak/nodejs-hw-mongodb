@@ -5,6 +5,7 @@ import {
   getAllContacts,
   getContactById,
   replaceContact,
+  updateContact,
 } from '../services/contacts.js';
 
 export const getContactsController = async (req, res) => {
@@ -75,4 +76,20 @@ export const replaceContactController = async (req, res) => {
     message: 'Contact created successfully',
     data: result.value,
   });
+};
+
+export const updateContactController = async (req, res) => {
+    const {contactId} = req.params;
+    const contact = req.body;
+    const result = await updateContact(contactId, contact);
+
+    if(!result) {
+        throw createHttpError(404, 'Contact not found');
+    }
+
+    res.status(200).json({
+        status: 200,
+	    message: "Successfully patched a contact!",
+	    data: result
+    });
 };

@@ -28,3 +28,8 @@ export const replaceContact = async (contactId, contact) => {
   });
   return {value: result.value, updatedExisting: result.lastErrorObject.updatedExisting};
 };
+
+export const updateContact = async (contactId, contact) => {
+  const result = await Contact.findByIdAndUpdate(contactId, contact, {new: true});
+  return result;
+};
