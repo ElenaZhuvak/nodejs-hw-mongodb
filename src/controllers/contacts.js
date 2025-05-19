@@ -8,7 +8,7 @@ import {
   updateContact,
 } from '../services/contacts.js';
 
-export const getContactsController = async (req, res) => {
+export async function getContactsController(req, res) {
   const contacts = await getAllContacts();
 
   res.status(200).json({
@@ -18,7 +18,7 @@ export const getContactsController = async (req, res) => {
   });
 };
 
-export const getContactByIdController = async (req, res) => {
+export async function getContactByIdController(req, res) {
   const { contactId } = req.params;
   const contact = await getContactById(contactId);
   if (!contact) {
@@ -31,7 +31,7 @@ export const getContactByIdController = async (req, res) => {
   });
 };
 
-export const createContactController = async (req, res) => {
+export async function createContactController(req, res) {
   const payload = req.body;
   if (!payload.name || !payload.phoneNumber || !payload.contactType) {
     return res.status(400).json({
@@ -48,7 +48,7 @@ export const createContactController = async (req, res) => {
   });
 };
 
-export const deleteContactController = async (req, res) => {
+export async function deleteContactController(req, res) {
   const { contactId } = req.params;
   const contact = await deleteContact(contactId);
 
@@ -58,7 +58,7 @@ export const deleteContactController = async (req, res) => {
   res.status(204).send();
 };
 
-export const replaceContactController = async (req, res) => {
+export async function replaceContactController(req, res) {
   const { contactId } = req.params;
   const contact = req.body;
   const result = await replaceContact(contactId, contact);
@@ -78,7 +78,7 @@ export const replaceContactController = async (req, res) => {
   });
 };
 
-export const updateContactController = async (req, res) => {
+export async function updateContactController(req, res) {
   const { contactId } = req.params;
   const contact = req.body;
   const result = await updateContact(contactId, contact);

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { validContactType } from '../../constants/constants.js';
 
 export const contactSchema = new mongoose.Schema({
     name: {
@@ -20,7 +21,7 @@ export const contactSchema = new mongoose.Schema({
     contactType: {
         type: String,
         required: true,
-        enum: ['work', 'home', 'personal'],
+        enum: validContactType,
         default: 'personal',
     }
 }, {timestamps: true,
