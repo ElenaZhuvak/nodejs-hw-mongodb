@@ -8,12 +8,21 @@ import {
   updateContact,
 } from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
+import { parsedSortParams } from '../utils/parseSortParams.js';
 
 export async function getAllContactsController(req, res) {
-  
   const {page, perPage} = parsePaginationParams(req.query);
-  const contacts = await getAllContacts({page, perPage});
+  const {sortOrder, sortBy} = parsedSortParams(req.query);
 
+  const contacts = await getAllContacts({page, perPage, sortOrder, sortBy});
+
+  if(page > contacts.totalPages ) {
+    return res.status(400).json({
+      status: 400,
+      message: `Page ${page} does not exist. Total pages: ${contacts.totalPages}`
+    });
+  }
+  
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
