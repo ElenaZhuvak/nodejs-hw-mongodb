@@ -9,12 +9,14 @@ import {
 } from '../services/contacts.js';
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parsedSortParams } from '../utils/parseSortParams.js';
+import { parseFilterParams } from '../utils/parseFilterParams.js';
 
 export async function getAllContactsController(req, res) {
   const {page, perPage} = parsePaginationParams(req.query);
   const {sortOrder, sortBy} = parsedSortParams(req.query);
+  const filter = parseFilterParams(req.query);
 
-  const contacts = await getAllContacts({page, perPage, sortOrder, sortBy});
+  const contacts = await getAllContacts({page, perPage, sortOrder, sortBy, filter});
 
   if(page > contacts.totalPages ) {
     return res.status(400).json({
