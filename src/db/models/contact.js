@@ -23,9 +23,7 @@ export const contactSchema = new mongoose.Schema({
         enum: ['work', 'home', 'personal'],
         default: 'personal',
     }
-}, {timestamps: true,
-    versionKey: false,
-});
+}, {timestamps: true});
 
 const Contact = mongoose.model('Contact', contactSchema);
 export default Contact;
