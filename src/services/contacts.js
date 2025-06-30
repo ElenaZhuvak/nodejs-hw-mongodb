@@ -1,35 +1,26 @@
 import Contact from '../db/models/contact.js';
 
-export const getAllContacts = async () => {
+export const getContacts = async (req, res) => {
   const contacts = await Contact.find();
-  return contacts;
-};
-
-export const getContactById = async (contactId) => {
-  const contact = await Contact.findById(contactId);
-  return contact;
-};
-
-export const createContact = async (payload) => {
-  const contact = await Contact.create(payload);
-  return contact;
-};
-
-export const deleteContact = async (contactId) => {
-  const contact = await Contact.findByIdAndDelete(contactId);
-  return contact;
-};
-
-export const replaceContact = async (contactId, contact) => {
-  const result = await Contact.findByIdAndUpdate(contactId, contact, {
-    new: true,
-    upsert: true,
-    includeResultMetadata: true,
+  res.json({
+    status: 200,
+    message: 'Successfully found contacts!',
+    data: contacts,
   });
-  return {value: result.value, updatedExisting: result.lastErrorObject.updatedExisting};
 };
 
-export const updateContact = async (contactId, contact) => {
-  const result = await Contact.findByIdAndUpdate(contactId, contact, {new: true});
-  return result;
+export const getContactById = async (req, res) => {
+  const { id } = req.params;
+  const contact = await Contact.findById(id);
+
+  if (contact === null) {
+    return res.status(404).json({
+      message: 'Contact not found',
+    });
+  }
+  res.json({
+    status: 200,
+    message: `Successfully found contact with id ${id}!`,
+    data: contact,
+  });
 };
