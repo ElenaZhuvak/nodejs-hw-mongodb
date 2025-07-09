@@ -19,7 +19,7 @@ export const setupServer = () => {
         // удобно, чтобы не засорять каждый раз терминал логами, логирует только ошибки
     }));
 
-    app.use('/', contactsRouter);
+    app.use('/contacts', contactsRouter);
 
     app.use(notFoundHandler);
 
