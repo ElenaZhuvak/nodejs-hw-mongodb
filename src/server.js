@@ -19,13 +19,16 @@ export const setupServer = () => {
         // удобно, чтобы не засорять каждый раз терминал логами, логирует только ошибки
     }));
 
-    app.use(contactsRouter);
+    app.use('/contacts', contactsRouter);
 
-    app.use('*', notFoundHandler);
+    app.use(notFoundHandler);
 
     app.use(errorHandler);
 
-    app.listen(PORT, () => {
+    app.listen(PORT, (error) => {
+        if (error) {
+            throw error;
+        }
         console.log(`Server is running on port ${PORT}`);
     });
 };

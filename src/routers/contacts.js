@@ -9,14 +9,14 @@ import { validateId } from "../middlewares/validateId.js";
 export const contactsRouter = Router();
 const jsonParser = express.json();
 
-contactsRouter.get('/contacts', ctrlWrapper(getAllContactsController));
+contactsRouter.get('/', ctrlWrapper(getAllContactsController));
 
-contactsRouter.get('/contacts/:contactId', validateId, ctrlWrapper(getContactByIdController));
+contactsRouter.get('/:contactId', validateId, ctrlWrapper(getContactByIdController));
 
-contactsRouter.post('/contacts', jsonParser, validateBody(createContactSchema), ctrlWrapper(createContactController));
+contactsRouter.post('/', jsonParser, validateBody(createContactSchema), ctrlWrapper(createContactController));
 
-contactsRouter.delete('/contacts/:contactId', validateId, ctrlWrapper(deleteContactController));
+contactsRouter.delete('/:contactId', validateId, ctrlWrapper(deleteContactController));
 
-contactsRouter.put('/contacts/:contactId', validateId, jsonParser, validateBody(createContactSchema), ctrlWrapper(replaceContactController));
+contactsRouter.put('/:contactId', validateId, jsonParser, validateBody(createContactSchema), ctrlWrapper(replaceContactController));
 
-contactsRouter.patch('/contacts/:contactId', validateId, jsonParser, validateBody(updateContactSchema), ctrlWrapper(updateContactController));
+contactsRouter.patch('/:contactId', validateId, jsonParser, validateBody(updateContactSchema), ctrlWrapper(updateContactController));
