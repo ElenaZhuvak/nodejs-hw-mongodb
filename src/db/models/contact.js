@@ -1,7 +1,7 @@
-import mongoose from 'mongoose';
+import {Schema, model} from 'mongoose';
 import { validContactType } from '../../constants/constants.js';
 
-export const contactSchema = new mongoose.Schema({
+export const contactSchema = new Schema({
     name: {
         type: String,
         required: true,
@@ -28,5 +28,5 @@ export const contactSchema = new mongoose.Schema({
     versionKey: false,
 });
 
-const Contact = mongoose.model('Contact', contactSchema);
+const Contact = model('Contact', contactSchema);
 export default Contact;

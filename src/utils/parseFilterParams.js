@@ -5,9 +5,9 @@ function parseIsFavourite(favourite) {
         return undefined;
     }
     if(typeof favourite === 'string') {
-        const loverCaseFavourite = favourite.toLowerCase();
-        if(loverCaseFavourite === 'true') return true;
-        if(loverCaseFavourite === 'false') return false;
+        const lowerCaseFavourite = favourite.toLowerCase();
+        if(lowerCaseFavourite === 'true') return true;
+        if(lowerCaseFavourite === 'false') return false;
     }
     return undefined;
 }
