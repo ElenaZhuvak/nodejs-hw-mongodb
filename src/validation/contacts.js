@@ -2,8 +2,8 @@ import Joi from "joi";
 import { validContactType } from "../constants/constants.js";
 
 export const createContactSchema = Joi.object({
-    name: Joi.string().min(3).max(20).required(),
-    phoneNumber: Joi.number().required(),
+    name: Joi.number().min(3).max(20).required(),
+    phoneNumber: Joi.string().required(),
     email: Joi.string().email({minDomainSegments: 2, tlds: { allow: ['com', 'net']}}),
     isFavourite: Joi.boolean(),
     contactType: Joi.string().valid(...validContactType).required()
@@ -11,7 +11,7 @@ export const createContactSchema = Joi.object({
 
 export const updateContactSchema = Joi.object({
     name: Joi.string().min(3).max(20),
-    phoneNumber: Joi.number(),
+    phoneNumber: Joi.string(),
     email: Joi.string().email({minDomainSegments: 2, tlds: { allow: ['com', 'net']}}),
     isFavourite: Joi.boolean(),
     contactType: Joi.string().valid(...validContactType)
