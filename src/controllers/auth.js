@@ -7,11 +7,6 @@ export async function registerUserController(req, res) {
             message: 'Name, email and password are required'
         });
     }
-
-    // if(email === payload.email) {
-    //     throw createHttpError(409, 'Email in use');
-    // }
-    
     const user = await registerUser(payload);
     res.status(201).json({
         status: 201,
