@@ -2,8 +2,8 @@ import createHttpError from 'http-errors';
 import { Session, User } from '../db/models/user.js';
 import bcrypt from 'bcrypt';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/constants.js';
-import pkg from 'bcrypt';
-const { randomBytes } = pkg;
+import crypto from 'crypto';
+const { randomBytes } = crypto;
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
