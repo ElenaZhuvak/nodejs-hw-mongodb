@@ -17,8 +17,9 @@ export async function registerUserController(req, res) {
 
 export async function loginUserController(req, res) {
     const user = await loginUser(req.body);
-    res.send({
-        message: 'Logged in',
-        data: user
+    // console.log(user);
+    res.status(200).json({
+        status: 200,
+        message: 'Successfully logged in an user!'
     });
 }

@@ -1,6 +1,9 @@
 import createHttpError from 'http-errors';
-import { User } from '../db/models/user.js';
+import { Session, User } from '../db/models/user.js';
 import bcrypt from 'bcrypt';
+import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/constants.js';
+import pkg from 'bcrypt';
+const { randomBytes } = pkg;
 
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -21,4 +24,16 @@ export async function loginUser(payload) {
   if (!isMatch) {
     throw new createHttpError(401, 'Email or password is not correct');
   }
+
+  await Session.deleteOne({userId: user._id});
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+
+  return await Session.create({
+    userId: user._id,
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now()) + FIFTEEN_MINUTES,
+    refreshTokenValidUntil: new Date(Date.now()) + THIRTY_DAYS,
+  });
 }
