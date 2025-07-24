@@ -1,5 +1,5 @@
 import { THIRTY_DAYS } from "../constants/constants.js";
-import { loginUser, registerUser } from "../services/auth.js";
+import { loginUser, logoutUser, registerUser } from "../services/auth.js";
 
 // ****** RegisterController
 export async function registerUserController(req, res) {
@@ -38,4 +38,16 @@ export async function loginUserController(req, res) {
             accessToken: session.accessToken,
         }
     });
+}
+
+// ****** LogoutController
+export async function logoutUserController(req, res) {
+    if (req.cookies.sessionId) {
+        await logoutUser(req.cookies.sessionId);
+    }
+
+    res.clearCookie('sessionId');
+    res.clearCookie('refreshToken');
+
+    res.status(201).send();
 }

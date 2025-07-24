@@ -40,3 +40,8 @@ export async function loginUser(payload) {
     refreshTokenValidUntil: new Date(Date.now()) + THIRTY_DAYS,
   });
 }
+
+// ****** Logout
+export async function logoutUser(sessionId) {
+  await Session.deleteOne({_id: sessionId});
+}
