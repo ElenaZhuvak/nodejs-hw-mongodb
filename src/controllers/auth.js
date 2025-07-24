@@ -1,5 +1,7 @@
+import { THIRTY_DAYS } from "../constants/constants.js";
 import { loginUser, registerUser } from "../services/auth.js";
 
+// ****** RegisterController
 export async function registerUserController(req, res) {
     const payload = req.body;
     if (!payload.name || !payload.email || !payload.password) {
@@ -15,11 +17,25 @@ export async function registerUserController(req, res) {
     });
 }
 
+// ******* LoginController
 export async function loginUserController(req, res) {
-    const user = await loginUser(req.body);
-    console.log(user);
+    const session = await loginUser(req.body);
+
+    res.cookie('refreshToken', session.refreshToken, {
+        httpOnly: true,
+        expires: new Date(Date.now() + THIRTY_DAYS)
+    });
+
+    res.cookie('sessionId', session._id, {
+        httpOnly: true,
+        expires: new Date(Date.now() + THIRTY_DAYS)
+    });
+
     res.status(200).json({
         status: 200,
-        message: 'Successfully logged in an user!'
+        message: 'Successfully logged in an user!',
+        data: {
+            accessToken: session.accessToken,
+        }
     });
 }

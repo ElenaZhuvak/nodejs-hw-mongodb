@@ -5,6 +5,7 @@ import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/constants.js';
 import crypto from 'crypto';
 const { randomBytes } = crypto;
 
+// ****** Register
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
   if (user) {
@@ -14,6 +15,8 @@ export async function registerUser(payload) {
   return await User.create({ ...payload, password: encryptedPassword});
 };
 
+
+// ****** Login
 export async function loginUser(payload) {
   const user = await User.findOne({ email: payload.email });
   if (!user) {
