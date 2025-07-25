@@ -49,7 +49,7 @@ export async function logoutUserController(req, res) {
     res.clearCookie('sessionId');
     res.clearCookie('refreshToken');
 
-    res.status(201).send();
+    res.status(204).send();
 }
 
 // ****** RefreshController
