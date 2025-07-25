@@ -45,3 +45,38 @@ export async function loginUser(payload) {
 export async function logoutUser(sessionId) {
   await Session.deleteOne({_id: sessionId});
 }
+
+// ****** Refresh
+function createSession() {
+  const accessToken = randomBytes(30).toString('base64');
+  const refreshToken = randomBytes(30).toString('base64');
+
+  return {
+    accessToken,
+    refreshToken,
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+  };
+}
+
+export async function refreshUser({sessionId, refreshToken}) {
+  const session = await Session.findOne({_id: sessionId, refreshToken});
+  if(!session) {
+    throw createHttpError(401, 'Not found session');
+  }
+
+  const sessionTokenExpired = new Date() > new Date(session.refreshTokenValidUntil);
+  if(!sessionTokenExpired) {
+    throw createHttpError(401, 'Session token expired');
+  }
+
+  await Session.deleteOne({_id: sessionId, refreshToken});
+
+  const newSession = createSession();
+
+  return await Session.create({
+    userId: session.userId,
+    ...newSession
+  });
+
+}
