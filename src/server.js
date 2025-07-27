@@ -7,6 +7,7 @@ import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { authRouter } from './routers/auth.js';
 import cookieParser from 'cookie-parser';
+import { authenticate } from './middlewares/authenticate.js';
 
 const PORT = Number(getEnvVar('PORT', 3000));
 
@@ -19,12 +20,12 @@ export const setupServer = () => {
         transport: {
             target: 'pino-pretty',
         },
-        // level: 'error'
+        level: 'error'
         // удобно, чтобы не засорять каждый раз терминал логами, логирует только ошибки
     }));
 
-    app.use('/contacts', contactsRouter);
     app.use('/auth', authRouter);
+    app.use('/contacts', authenticate, contactsRouter);
 
     app.use(notFoundHandler);
     app.use(errorHandler);

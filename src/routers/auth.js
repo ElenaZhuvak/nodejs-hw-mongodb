@@ -8,6 +8,9 @@ export const authRouter = Router();
 const jsonParser = express.json();
 
 authRouter.post('/register', jsonParser, validateBody(registerUserSchema), registerUserController);
+
 authRouter.post('/login', jsonParser, validateBody(loginUserSchema), loginUserController);
+
 authRouter.post('/logout', logoutUserController);
+
 authRouter.post('/refresh', refreshUserController);
