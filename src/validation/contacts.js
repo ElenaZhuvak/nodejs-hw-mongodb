@@ -2,7 +2,7 @@ import Joi from "joi";
 import { validContactType } from "../constants/constants.js";
 
 export const createContactSchema = Joi.object({
-    name: Joi.number().min(3).max(20).required(),
+    name: Joi.string().min(3).max(20).required(),
     phoneNumber: Joi.string().required(),
     email: Joi.string().email(),
     isFavourite: Joi.boolean(),

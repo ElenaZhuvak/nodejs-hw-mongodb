@@ -20,7 +20,7 @@ export const setupServer = () => {
         transport: {
             target: 'pino-pretty',
         },
-        level: 'error'
+        // level: 'error'
         // удобно, чтобы не засорять каждый раз терминал логами, логирует только ошибки
     }));
 
