@@ -41,11 +41,6 @@ export async function loginUser(payload) {
   });
 }
 
-// ****** Logout
-export async function logoutUser(sessionId) {
-  await Session.deleteOne({_id: sessionId});
-}
-
 // ****** Refresh
 function createSession() {
   const accessToken = randomBytes(30).toString('base64');
@@ -66,7 +61,7 @@ export async function refreshUser({sessionId, refreshToken}) {
   }
 
   const sessionTokenExpired = new Date() > new Date(session.refreshTokenValidUntil);
-  if(!sessionTokenExpired) {
+  if(sessionTokenExpired) {
     throw createHttpError(401, 'Session token expired');
   }
 
@@ -78,5 +73,9 @@ export async function refreshUser({sessionId, refreshToken}) {
     userId: session.userId,
     ...newSession
   });
+}
 
+// ****** Logout
+export async function logoutUser(sessionId) {
+  await Session.deleteOne({_id: sessionId});
 }

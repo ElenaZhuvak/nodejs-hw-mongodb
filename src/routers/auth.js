@@ -11,6 +11,6 @@ authRouter.post('/register', jsonParser, validateBody(registerUserSchema), regis
 
 authRouter.post('/login', jsonParser, validateBody(loginUserSchema), loginUserController);
 
-authRouter.post('/logout', logoutUserController);
-
 authRouter.post('/refresh', refreshUserController);
+
+authRouter.post('/logout', logoutUserController);

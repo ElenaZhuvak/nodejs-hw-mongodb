@@ -40,18 +40,6 @@ export async function loginUserController(req, res) {
     });
 }
 
-// ****** LogoutController
-export async function logoutUserController(req, res) {
-    if (req.cookies.sessionId) {
-        await logoutUser(req.cookies.sessionId);
-    }
-
-    res.clearCookie('sessionId');
-    res.clearCookie('refreshToken');
-
-    res.status(204).send();
-}
-
 // ****** RefreshController
 function setupSession(res, session) {
     res.cookie('refreshToken', session.refreshToken, {httpOnly: true, expires: new Date(Date.now() + THIRTY_DAYS)});
@@ -72,5 +60,16 @@ export async function refreshUserController(req, res) {
             accessToken: session.accessToken,
         }
     });
+}
 
+// ****** LogoutController
+export async function logoutUserController(req, res) {
+    if (req.cookies.sessionId) {
+        await logoutUser(req.cookies.sessionId);
+    }
+
+    res.clearCookie('sessionId');
+    res.clearCookie('refreshToken');
+
+    res.status(204).send();
 }
