@@ -1,8 +1,10 @@
 import createHttpError from 'http-errors';
-import { Session, User } from '../db/models/user.js';
+import { User } from '../db/models/user.js';
 import bcrypt from 'bcrypt';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/constants.js';
 import crypto from 'crypto';
+import { Session } from '../db/models/session.js';
+
 const { randomBytes } = crypto;
 
 // ****** Register
@@ -36,8 +38,8 @@ export async function loginUser(payload) {
     userId: user._id,
     accessToken,
     refreshToken,
-    accessTokenValidUntil: new Date(Date.now()) + FIFTEEN_MINUTES,
-    refreshTokenValidUntil: new Date(Date.now()) + THIRTY_DAYS,
+    accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+    refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
   });
 }
 
