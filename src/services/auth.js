@@ -103,13 +103,37 @@ export async function requestResetPassword(email) {
     }
   );
 
-  const sendMail = await sendMail({
+  const sendMailReset = await sendMail({
     // from: SMTP_FROM,
     to: email,
     subject: 'Reset password',
     html: `<p>To reset the password, please visit this <a href="http://localhost:3000/reset-password?token=${token}">link</a></p>`,
   });
-  if (!sendMail) {
+  if (!sendMailReset) {
     throw createHttpError(500, 'Failed to send the email, please try again later.');
+  }
+}
+
+// ****** Reset Password
+export async function resetPassword(token, password) {
+  try {
+    const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
+    const user = await User.findById(decoded.sub);
+    if(!user) {
+      throw createHttpError(404, 'User not found');
+    }
+    const encryptedPassword = await bcrypt.hash(password, 10);
+    await User.findByIdAndUpdate(user._id, {password: encryptedPassword});
+
+  } catch (error) {
+    if(error.name === 'TokenExpiredError') {
+      throw createHttpError(401, 'Token is expired or invalid');
+    }
+
+    if(error.name === 'JsonWebTokenError') {
+      throw createHttpError(401, 'Token is Unauthorized');
+    }
+
+    throw error;
   }
 }
