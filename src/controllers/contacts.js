@@ -10,47 +10,61 @@ import {
 import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parsedSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
+import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
 
 import * as fs from 'node:fs/promises';
-import path from 'node:path';
 
+// ******************************
 export async function getAllContactsController(req, res) {
-  const {page, perPage} = parsePaginationParams(req.query);
-  const {sortOrder, sortBy} = parsedSortParams(req.query);
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortOrder, sortBy } = parsedSortParams(req.query);
   const filter = parseFilterParams(req.query);
 
-  const contacts = await getAllContacts({page, perPage, sortOrder, sortBy, filter, userId: req.user.id});
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortOrder,
+    sortBy,
+    filter,
+    userId: req.user.id,
+  });
 
-  if(page > contacts.totalPages ) {
+  if (page > contacts.totalPages) {
     return res.status(400).json({
       status: 400,
-      message: `Page ${page} does not exist. Total pages: ${contacts.totalPages}`
+      message: `Page ${page} does not exist. Total pages: ${contacts.totalPages}`,
     });
   }
-  
+
   res.status(200).json({
     status: 200,
     message: 'Successfully found contacts!',
     data: contacts,
   });
-};
+}
 
+// ******************************
 export async function getContactByIdController(req, res) {
   const { contactId } = req.params;
   const contact = await getContactById(contactId, req.user.id);
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
   }
-  
+
   res.status(200).json({
     status: 200,
     message: `Successfully found contact by ${contactId}`,
     data: contact,
   });
-};
+}
 
+// ******************************
 export async function createContactController(req, res) {
-  await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
+  // await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
+
+  const result = await uploadToCloudinary(req.file.path);
+// console.log(result);
+await fs.unlink(req.file.path);
 
   const payload = req.body;
   if (!payload.name || !payload.phoneNumber || !payload.contactType) {
@@ -59,15 +73,20 @@ export async function createContactController(req, res) {
     });
   }
 
-  const contact = await createContact({...req.body, photo: `http://localhost:3000/photos/${req.file.filename}`, userId: req.user.id});
+  const contact = await createContact({
+    ...req.body,
+    photo: result.secure_url,
+    userId: req.user.id,
+  });
 
   res.status(201).json({
     status: 201,
     message: 'Successfully created a contact!',
     data: contact,
   });
-};
+}
 
+// ******************************
 export async function deleteContactController(req, res) {
   const { contactId } = req.params;
   const contact = await deleteContact(contactId, req.user.id);
@@ -76,8 +95,9 @@ export async function deleteContactController(req, res) {
     throw createHttpError(404, 'Contact not found');
   }
   res.status(204).send();
-};
+}
 
+// ******************************
 export async function replaceContactController(req, res) {
   const { contactId } = req.params;
   const contact = req.body;
@@ -96,8 +116,9 @@ export async function replaceContactController(req, res) {
     message: 'Contact created successfully',
     data: result.value,
   });
-};
+}
 
+// ******************************
 export async function updateContactController(req, res) {
   const { contactId } = req.params;
   const contact = req.body;
@@ -112,4 +133,4 @@ export async function updateContactController(req, res) {
     message: 'Successfully updated a contact!',
     data: result,
   });
-};
+}
