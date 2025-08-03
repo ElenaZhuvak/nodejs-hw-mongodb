@@ -11,8 +11,10 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parsedSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 import { uploadToCloudinary } from '../utils/uploadToCloudinary.js';
+import { getEnvVar } from '../utils/getEnvVar.js';
 
-import * as fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 // ******************************
 export async function getAllContactsController(req, res) {
@@ -60,11 +62,17 @@ export async function getContactByIdController(req, res) {
 
 // ******************************
 export async function createContactController(req, res) {
-  // await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
+  let photo = null;
 
-  const result = await uploadToCloudinary(req.file.path);
-// console.log(result);
-await fs.unlink(req.file.path);
+  if(getEnvVar('CLOUDINARY_FEATURE_FLAG') === 'true') {
+    const result = await uploadToCloudinary(req.file.path);
+    await fs.unlink(req.file.path);
+    photo = result.secure_url;
+  } else {
+  await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
+  photo = `http://localhost:3000/photos/${req.file.filename}`;
+
+  }
 
   const payload = req.body;
   if (!payload.name || !payload.phoneNumber || !payload.contactType) {
@@ -73,11 +81,7 @@ await fs.unlink(req.file.path);
     });
   }
 
-  const contact = await createContact({
-    ...req.body,
-    photo: result.secure_url,
-    userId: req.user.id,
-  });
+  const contact = await createContact({...req.body, photo, userId: req.user.id});
 
   res.status(201).json({
     status: 201,
