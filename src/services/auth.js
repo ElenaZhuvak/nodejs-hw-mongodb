@@ -13,10 +13,12 @@ import * as fs from 'node:fs';
 import path from 'node:path';
 
 const { randomBytes } = crypto;
+const frontend_domain = getEnvVar('APP_DOMAIN');
 const REQUEST_PASSWORD_RESET_TEMPLATE = fs.readFileSync(
   path.resolve('src/templates/request-reset-pwd-email.hbs'),
   { encoding: 'utf-8' },
 );
+
 
 // ****** Register
 export async function registerUser(payload) {
@@ -116,7 +118,7 @@ export async function requestResetPassword(email) {
     // from: SMTP_FROM,
     to: email,
     subject: 'Reset password',
-    html: template({resetPasswordLink: `http://localhost:3000/reset-password?token=${token}`}),
+    html: template({resetPasswordLink: `${frontend_domain}/reset-password?token=${token}`}),
   });
   
   if (!sendMailReset) {

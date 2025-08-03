@@ -16,6 +16,8 @@ import { getEnvVar } from '../utils/getEnvVar.js';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
+const frontend_domain = getEnvVar('APP_DOMAIN');
+
 // ******************************
 export async function getAllContactsController(req, res) {
   const { page, perPage } = parsePaginationParams(req.query);
@@ -73,7 +75,7 @@ export async function createContactController(req, res) {
       req.file.path,
       path.resolve('src/uploads/photos', req.file.filename),
     );
-    photo = `http://localhost:3000/photos/${req.file.filename}`;
+    photo = `${frontend_domain}/${req.file.filename}`;
   }
 
   const payload = req.body;
@@ -119,7 +121,7 @@ export async function replaceContactController(req, res) {
       contact.photo = result.secure_url;
     } else {
       await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
-      contact.photo = `http://localhost:3000/photos/${req.file.filename}`;
+      contact.photo = `${frontend_domain}/photos/${req.file.filename}`;
     }
   }
   const result = await replaceContact(contactId, contact, userId);
@@ -151,7 +153,7 @@ export async function updateContactController(req, res) {
       contact.photo = result.secure_url;
     } else {
       await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
-      contact.photo = `http://localhost:3000/photos/${req.file.filename}`;
+      contact.photo = `${frontend_domain}/photos/${req.file.filename}`;
     }
   }
 
