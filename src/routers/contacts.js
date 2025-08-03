@@ -17,6 +17,6 @@ contactsRouter.post('/', jsonParser, upload.single('photo'), validateBody(create
 
 contactsRouter.delete('/:contactId', validateId, deleteContactController);
 
-contactsRouter.put('/:contactId', validateId, jsonParser, validateBody(createContactSchema), replaceContactController);
+contactsRouter.put('/:contactId', validateId, jsonParser, upload.single('photo'), validateBody(createContactSchema), replaceContactController);
 
-contactsRouter.patch('/:contactId', validateId, jsonParser, validateBody(updateContactSchema), updateContactController);
+contactsRouter.patch('/:contactId', validateId, jsonParser, upload.single('photo'), validateBody(updateContactSchema), updateContactController);
