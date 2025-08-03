@@ -24,6 +24,10 @@ export const contactSchema = new Schema({
         enum: validContactType,
         default: 'personal',
     },
+    photo: {
+        type: String,
+        default: null,
+    },
     userId: {
         type: Schema.Types.ObjectId,
         required: true,

@@ -1,14 +1,22 @@
-import createHttpError from 'http-errors';
 import { User } from '../db/models/user.js';
-import bcrypt from 'bcrypt';
 import { FIFTEEN_MINUTES, THIRTY_DAYS } from '../constants/constants.js';
-import crypto from 'crypto';
 import { Session } from '../db/models/session.js';
-import jwt from 'jsonwebtoken';
 import { getEnvVar } from '../utils/getEnvVar.js';
 import { sendMail } from '../utils/sendMail.js';
 
+import createHttpError from 'http-errors';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
+import Handlebars from 'handlebars';
+import * as fs from 'node:fs';
+import path from 'node:path';
+
 const { randomBytes } = crypto;
+const REQUEST_PASSWORD_RESET_TEMPLATE = fs.readFileSync(
+  path.resolve('src/templates/request-reset-pwd-email.hbs'),
+  { encoding: 'utf-8' },
+);
 
 // ****** Register
 export async function registerUser(payload) {
@@ -100,17 +108,22 @@ export async function requestResetPassword(email) {
     getEnvVar('JWT_SECRET'),
     {
       expiresIn: '5min',
-    }
+    },
   );
+  const template = Handlebars.compile(REQUEST_PASSWORD_RESET_TEMPLATE);
 
   const sendMailReset = await sendMail({
     // from: SMTP_FROM,
     to: email,
     subject: 'Reset password',
-    html: `<p>To reset the password, please visit this <a href="http://localhost:3000/reset-password?token=${token}">link</a></p>`,
+    html: template({resetPasswordLink: `http://localhost:3000/reset-password?token=${token}`}),
   });
+  
   if (!sendMailReset) {
-    throw createHttpError(500, 'Failed to send the email, please try again later.');
+    throw createHttpError(
+      500,
+      'Failed to send the email, please try again later.',
+    );
   }
 }
 
@@ -119,18 +132,17 @@ export async function resetPassword(token, password) {
   try {
     const decoded = jwt.verify(token, getEnvVar('JWT_SECRET'));
     const user = await User.findById(decoded.sub);
-    if(!user) {
+    if (!user) {
       throw createHttpError(404, 'User not found');
     }
     const encryptedPassword = await bcrypt.hash(password, 10);
-    await User.findByIdAndUpdate(user._id, {password: encryptedPassword});
-
+    await User.findByIdAndUpdate(user._id, { password: encryptedPassword });
   } catch (error) {
-    if(error.name === 'TokenExpiredError') {
+    if (error.name === 'TokenExpiredError') {
       throw createHttpError(401, 'Token is expired or invalid');
     }
 
-    if(error.name === 'JsonWebTokenError') {
+    if (error.name === 'JsonWebTokenError') {
       throw createHttpError(401, 'Token is Unauthorized');
     }
 

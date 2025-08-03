@@ -11,6 +11,9 @@ import { parsePaginationParams } from '../utils/parsePaginationParams.js';
 import { parsedSortParams } from '../utils/parseSortParams.js';
 import { parseFilterParams } from '../utils/parseFilterParams.js';
 
+import * as fs from 'node:fs/promises';
+import path from 'node:path';
+
 export async function getAllContactsController(req, res) {
   const {page, perPage} = parsePaginationParams(req.query);
   const {sortOrder, sortBy} = parsedSortParams(req.query);
@@ -47,6 +50,8 @@ export async function getContactByIdController(req, res) {
 };
 
 export async function createContactController(req, res) {
+  await fs.rename(req.file.path, path.resolve('src/uploads/photos', req.file.filename));
+
   const payload = req.body;
   if (!payload.name || !payload.phoneNumber || !payload.contactType) {
     return res.status(400).json({
@@ -54,7 +59,7 @@ export async function createContactController(req, res) {
     });
   }
 
-  const contact = await createContact({...req.body, userId: req.user.id});
+  const contact = await createContact({...req.body, photo: `http://localhost:3000/photos/${req.file.filename}`, userId: req.user.id});
 
   res.status(201).json({
     status: 201,
