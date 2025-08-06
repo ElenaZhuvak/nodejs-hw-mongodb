@@ -20,3 +20,7 @@ export const resetPasswordSchema = Joi.object({
     password: Joi.string().required(),
     // repeat_password: Joi.ref('password'),
 });
+
+export const confirmOAuthSchema = Joi.object({
+    code: Joi.string().required(),
+});

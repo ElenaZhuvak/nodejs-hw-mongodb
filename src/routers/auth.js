@@ -1,8 +1,8 @@
 import express from 'express';
 import { Router } from "express";
 import { validateBody } from '../middlewares/validateBody.js';
-import { loginUserSchema, registerUserSchema, resetPasswordSchema, sendResetEmailSchema } from '../validation/auth.js';
-import { getAuthUrlController, loginUserController, logoutUserController, refreshUserController, registerUserController, requestResetPasswordController, resetPasswordController } from '../controllers/auth.js';
+import { confirmOAuthSchema, loginUserSchema, registerUserSchema, resetPasswordSchema, sendResetEmailSchema } from '../validation/auth.js';
+import { confirmOAuthController, getAuthUrlController, loginUserController, logoutUserController, refreshUserController, registerUserController, requestResetPasswordController, resetPasswordController } from '../controllers/auth.js';
 
 export const authRouter = Router();
 const jsonParser = express.json();
@@ -20,3 +20,5 @@ authRouter.post('/send-reset-email', jsonParser, validateBody(sendResetEmailSche
 authRouter.post('/reset-pwd', jsonParser, validateBody(resetPasswordSchema), resetPasswordController);
 
 authRouter.get('/get-auth-url', getAuthUrlController);
+
+authRouter.post('/confirm-oauth', jsonParser, validateBody(confirmOAuthSchema), confirmOAuthController);

@@ -19,7 +19,6 @@ const REQUEST_PASSWORD_RESET_TEMPLATE = fs.readFileSync(
   { encoding: 'utf-8' },
 );
 
-
 // ****** Register
 export async function registerUser(payload) {
   const user = await User.findOne({ email: payload.email });
@@ -118,9 +117,11 @@ export async function requestResetPassword(email) {
     // from: SMTP_FROM,
     to: email,
     subject: 'Reset password',
-    html: template({resetPasswordLink: `${frontend_domain}/reset-password?token=${token}`}),
+    html: template({
+      resetPasswordLink: `${frontend_domain}/reset-password?token=${token}`,
+    }),
   });
-  
+
   if (!sendMailReset) {
     throw createHttpError(
       500,
@@ -150,4 +151,34 @@ export async function resetPassword(token, password) {
 
     throw error;
   }
+}
+
+// ****** OAuth Login Or Register
+export async function loginOrRegister(email, name) {
+  const user = await User.findOne({ email });
+  if (!user) {
+    const password = await bcrypt.hash(
+      crypto.randomBytes(30).toString('base64'),
+      10,
+    );
+
+    const createdUser = await User.create({ email, name, password });
+
+    return await Session.create({
+      userId: createdUser._id,
+      accessToken: randomBytes(30).toString('base64'),
+      refreshToken: randomBytes(30).toString('base64'),
+      accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+      refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+    });
+  }
+
+  await Session.deleteOne({userId: user._id});
+  return await Session.create({
+      userId: user._id,
+      accessToken: randomBytes(30).toString('base64'),
+      refreshToken: randomBytes(30).toString('base64'),
+      accessTokenValidUntil: new Date(Date.now() + FIFTEEN_MINUTES),
+      refreshTokenValidUntil: new Date(Date.now() + THIRTY_DAYS),
+    });
 }

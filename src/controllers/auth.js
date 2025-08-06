@@ -1,5 +1,6 @@
 import { THIRTY_DAYS } from '../constants/constants.js';
 import {
+  loginOrRegister,
   loginUser,
   logoutUser,
   refreshUser,
@@ -7,7 +8,7 @@ import {
   requestResetPassword,
   resetPassword,
 } from '../services/auth.js';
-import { getOAuthURL } from '../utils/googleOAuth.js';
+import { getOAuthURL, validateCode } from '../utils/googleOAuth.js';
 
 // ****** RegisterController
 export async function registerUserController(req, res) {
@@ -110,7 +111,7 @@ export async function resetPasswordController(req, res) {
   });
 }
 
-// ****** Generate URL for Authenticate 
+// ****** Generate URL for Authenticate
 export async function getAuthUrlController(req, res) {
   const url = getOAuthURL();
 
@@ -119,6 +120,33 @@ export async function getAuthUrlController(req, res) {
     message: 'Successfully get Google OAuth url',
     data: {
       url,
+    },
+  });
+}
+
+// ****** OAuth Login Or Register
+export async function confirmOAuthController(req, res) {
+  const ticket = await validateCode(req.body.code);
+
+  const session = await loginOrRegister(
+    ticket.payload.email,
+    ticket.payload.name,
+  );
+
+  res.cookie('sessionId', session._id, {
+    httpOnly: true,
+    expire: session.refreshTokenValidUntil,
+  });
+  res.cookie('refreshToken', session.refreshToken, {
+    httpOnly: true,
+    expire: session.refreshToken,
+  });
+
+  res.status(200).json({
+    status: 200,
+    message: 'User successfully logged in',
+    data: {
+      accessToken: session.accessToken,
     }
   });
 }
