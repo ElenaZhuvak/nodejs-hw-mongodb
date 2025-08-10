@@ -1,14 +1,16 @@
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import pino from 'pino-http';
+import path from 'node:path';
+
 import { getEnvVar } from './utils/getEnvVar.js';
 import { contactsRouter } from './routers/contacts.js';
 import { notFoundHandler } from './middlewares/notFoundHandler.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { authRouter } from './routers/auth.js';
 import { authenticate } from './middlewares/authenticate.js';
-import cookieParser from 'cookie-parser';
-import path from 'node:path';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 
 const PORT = Number(getEnvVar('PORT', 3000));
 
@@ -26,6 +28,7 @@ export const setupServer = () => {
     app.use(cookieParser());
     app.use('/photos', express.static(path.resolve('src/uploads/photos')));
 
+    app.use('/api-docs', swaggerDocs());
     app.use('/auth', authRouter);
     app.use('/contacts', authenticate, contactsRouter);
 
