@@ -28,7 +28,7 @@ properties:
     type: string
     example: john.doe@example.com
   isFavourite:
-    description: "Favourite contact"
+    description: "Favourite contact true/false"
     type: boolean
     example: false
   contactType:
@@ -40,6 +40,7 @@ properties:
     type: string
     example: 67f22a41875fd7d41ec03fd3
   photo:
+    description: Contact photo (optional)
     type: string
     format: binary
     example: null
